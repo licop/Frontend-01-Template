@@ -1,8 +1,9 @@
 const net = require('net');
+const parser = require("./parser.js");
 
 net.connect({
     host: "127.0.0.1",
-    port: 8088,
+    port: 8087,
     onread: {
         buffer: Buffer.alloc(4 * 1024),
         callback: function(nread, buf) {
@@ -197,7 +198,7 @@ class TrunkedBodyParser {
                 this.current = this.WAITING_LENGTH_LINE_END;
             } else {
                 this.length *= 10;
-                this.length += char.charCodeAt(0) - '0'.charCodeAt(0);
+                this.length += parseInt(char, 16);
             }
         } else if(this.current === this.WAITING_LENGTH_LINE_END) {
             if(char === '\n') {
@@ -228,7 +229,7 @@ void async function() {
     let request = new Request({
         method: "POST",
         host: "127.0.0.1",
-        port: 8088,
+        port: 8087,
         path: '/',
         headers: {
             ["x-Foo2"]: "customed"
@@ -238,7 +239,9 @@ void async function() {
         }        
     })
     let response = await request.send();
-    console.log(response);
+
+    let dom = parser.parseHTML(response.body);
+    console.log(response.body);
 }();
 
 
