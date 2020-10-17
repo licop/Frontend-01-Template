@@ -58,6 +58,7 @@ function computerMove() {
 
 function clone(pattern) {
     return JSON.parse(JSON.stringify(pattern));
+    // Object.create(pattern);
 }
 
 /**
