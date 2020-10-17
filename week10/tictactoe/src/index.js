@@ -19,14 +19,14 @@ function show() {
             cell.innerHTML = pattern[i][j] === 2 ? '❌' : 
             pattern[i][j] === 1 ? "⭕️" : "";
             
-            cell.addEventListener('click', () => move(j, i));      
+            cell.addEventListener('click', () => uesrMove(j, i));      
             
             board.appendChild(cell);
         }
     }
 }
 
-function move(x, y) {
+function uesrMove(x, y) {
     if(pattern[y][x] !== 0) 
         return;
     pattern[y][x] = color;
@@ -40,6 +40,20 @@ function move(x, y) {
     if(willWin(pattern, color)) {
         console.log(color === 1 ? '⭕️ will win' : '❌ will win');
     }
+    computerMove()
+}
+
+function computerMove() {
+    let choice = bestChoice(pattern, color);
+    if(choice.point) {
+        pattern[choice.point[1]][choice.point[0]] = color; 
+    }
+    if(checkWin(pattern, color)) {
+        console.log(color === 1 ? '⭕️ win' : '❌ win');
+    }
+    color = 3 - color;
+
+    show();
 }
 
 function clone(pattern) {
@@ -67,9 +81,25 @@ function willWin(pattern, color) {
     return null;
 }
 
+let openings = new Map();
+openings.set([
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+].toString() + '1', {
+    point: [1, 1],
+    result: 0
+})
+
 // 最好的选择
 function bestChoice(pattern, color) {
+    if(openings.has(pattern.toString() + color)) {
+        return openings.get(pattern.toString() + color);
+    }
+
     let point = willWin(pattern, color);
+
+
     if(point) {
         return {
             point: point,
