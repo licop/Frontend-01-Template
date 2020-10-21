@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Parcel Sandbox</title>
+	<meta charset="UTF-8" />
+	<style>
+		#traffic-light{
+			display: inline-block;
+		}
+		
+        .green.on {
+			background-color: green;
+		}
+		.yellow.on {
+			background-color: yellow;
+		}
+		.red.on {
+			background-color: red;
+		}
+		.light{
+			display: inline-block;
+			background-color: grey;
+			margin: 30px;
+			height: 100px;
+			width: 100px;
+			border-radius: 50px;
+		}
+	</style>
+</head>
+     
+<body>
+	<div id="app">
+	   <div id="traffic-light">
+		   <div class="green light"></div>
+		   <div class="red light"></div>
+		   <div class="yellow light"></div>
+	   </div>
+	   <button id="next">next</button>
+	</div>
+     
+	<script>
+		function sleep(dur) {
+			return new Promise(function(resolve) {
+				setTimeout(resolve, dur)
+			})
+		}
+
+		async function changeColor(color) {
+			var lights = document.getElementsByClassName('light');
+            for(let i = 0; i < lights.length; i++) {
+				
+				lights[i].classList.remove('on')
+			}
+			document.getElementsByClassName(color)[0].classList.add('on');
+		}
+
+		function happen(element, eventName) {
+			return new Promise((resolve, reject) => {
+				element.addEventListener(eventName, resolve, {once: true});
+			})
+		}
+        
+		async function main() {
+			while(true) {
+				changeColor("green");
+				await happen(document.getElementById('next'), 'click') //sleep(3000);
+				changeColor("yellow");
+				await happen(document.getElementById('next'), 'click') 
+				changeColor("red");
+				await happen(document.getElementById('next'), 'click') 
+			} 
+		}
+		main()
+	</script>
+</body>
+
+</html>
