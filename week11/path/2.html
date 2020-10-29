@@ -17,6 +17,35 @@
 
 
 <script>
+    // 启发式函数, 提高查找效率
+    class Sorted {
+        constructor(data, compare) {
+            this.data = data;
+            this.compare = compare;
+        }
+        take() {
+            if(!this.data.length) 
+                return ;
+            let x = this.data[0];
+            let index = 0;
+            for(let i = 0; i < this.data.length ;i++) {
+                if(this.compare(this.data[i], x) < 0) {
+                    x = this.data[i];
+                    index = i;
+                }
+            }
+            this.data[x] = this.data[this.data.length - 1];
+            this.data.pop();
+            return x;
+        }
+        insert(v) {
+            this.data.push(v);
+        }
+        get length() {
+            return this.data.length;
+        }
+    }
+
     var map = localStorage.map1 ? JSON.parse(localStorage.map1) : new Array(10000).fill(0);
     let container = document.getElementById('container');
 
@@ -63,9 +92,14 @@
     }, true); 
     
     async function findPath(map, start, end) {
-        map = map.slice();
+        map = map.slice();   
+        
+        function distance([x, y]) {
+            return (x - end[0]) ** 2 + (y - end[1]) ** 2
+        }
+        
         // 定义队列，从一侧入对，从一侧出队,广度优先搜索
-        let quene = [start];
+        let collection = new Sorted([start], (a, b) => distance(a) - distance(b));
         
         async function insert([x, y], pre) {
             if(map[100 * y + x] !== 0)
@@ -74,21 +108,19 @@
                 return;
             map[100 * y + x] = pre;
             container.children[y * 100 + x].style.backgroundColor = 'lightgreen';
-            await sleep(1)
-            quene.push([x, y]);
+            await sleep(5)
+            collection.insert([x, y]);
         }
 
-        while(quene.length) {
-            let [x, y] = quene.shift(); // pop unshift() | push shift()
+        while(collection.length) {
+            let [x, y] = collection.take(); 
             
             // 找到终点之后寻求路径
             if(x === end[0] && y === end[1]) {
                 let path = [];
                 while(x !== start[0] || y !== start[1]) {
                     path.push([x, y])
-
                     container.children[y * 100 + x].style.backgroundColor = 'pink';
-                    await sleep(5);
                     [x, y] = map[y * 100 + x];
                 }
                 return path;
