@@ -15,49 +15,17 @@
     input{
         width: 50px;
     }
-
 </style>
+
 <div id="setting">
     <p>设置终点x坐标：<input id="input-x" type="text"></p>
     <p>设置终点y坐标：<input id="input-y" type="text"></p>
     <button onclick="localStorage.map1 = JSON.stringify(map)">保存</button>
     <button onclick="startFindPath()">寻找路径</button>
 </div>
-
 <div id="container"></div>
 
 <script>
-
-    // 启发式函数, 提高查找效率
-    // 时间复杂度为O(n)
-    class Sorted {
-        constructor(data, compare) {
-            this.data = data;
-            this.compare = compare;
-        }
-        take() {
-            if(!this.data.length) 
-                return ;
-            let x = this.data[0];
-            let index = 0;
-            for(let i = 0; i < this.data.length ;i++) {
-                if(this.compare(this.data[i], x) < 0) {
-                    x = this.data[i];
-                    index = i;
-                }
-            }
-            this.data[x] = this.data[this.data.length - 1];
-            this.data.pop();
-            return x;
-        }
-        insert(v) {
-            this.data.push(v);
-        }
-        get length() {
-            return this.data.length;
-        }
-    }
-
     // 使用二叉堆 时间复杂度为O(log n)
     // 二叉堆一般用数组来表示
     // 如果存储数组的下标基于0，那么下标为i的节点的子节点是2i + 1与2i + 2
@@ -82,7 +50,6 @@
                     i = 2 * i + 1;
                     break;
                 }
-                
                 // 比较两个子节点，将较小的推向父节点
                 if(this.compare(this.data[2 * i + 1], this.data[2 * i + 2]) < 0) {
                     this.data[i] = this.data[2 * i + 1];
@@ -92,7 +59,6 @@
                     i = 2 * i + 2;
                 }
             }
-            
             if(i < this.data.length - 1)
                 // 将末尾数字插入i点
                 this.insertAt(i, this.data.pop())
@@ -121,14 +87,7 @@
  
     var map = localStorage.map1 ? JSON.parse(localStorage.map1) : new Array(10000).fill(0);
     let container = document.getElementById('container');
-    let B  = new BiaryHeap([], (a, b) => a - b);
-    B.insert(3)
-    B.insert(5)
-    B.insert(2)
-    B.insert(0)
-    B.insert(7)
-    B.insert(9)
-    B.insert(1)
+
     
     for(let y = 0; y < 100; y++) {
         for(let x = 0; x < 100; x++) {
@@ -228,7 +187,7 @@
 
         findPath(map, [0, 0], [endx, endy])
     }
-
+    
     function sleep(dur) {
         return new Promise(resolve => {
             setTimeout(resolve, dur);
