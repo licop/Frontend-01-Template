@@ -10,14 +10,27 @@
     }
     #container{
         width: 701px;
+        margin-top: 10px;
     }
+    input{
+        width: 50px;
+    }
+
 </style>
+<div id="setting">
+    <p>设置终点x坐标：<input id="input-x" type="text"></p>
+    <p>设置终点y坐标：<input id="input-y" type="text"></p>
+    <button onclick="localStorage.map1 = JSON.stringify(map)">保存</button>
+    <button onclick="startFindPath()">寻找路径</button>
+</div>
+
 <div id="container"></div>
-<button onclick="localStorage.map1 = JSON.stringify(map)">save</button>
+
 
 <script>
     var map = localStorage.map1 ? JSON.parse(localStorage.map1) : new Array(10000).fill(0);
     let container = document.getElementById('container');
+     
 
     for(let y = 0; y < 100; y++) {
         for(let x = 0; x < 100; x++) {
@@ -27,7 +40,7 @@
             if(map[y * 100 + x] === 1) {
                 cell.style.backgroundColor = 'black';
             }
-
+            
             cell.addEventListener('mousemove', () => {
                 if(mouse) {
                     if(clear) {
@@ -107,6 +120,14 @@
         return null;
     }
     
+    function startFindPath() {
+        let endx = Number(document.getElementById('input-x').value);
+        let endy = Number(document.getElementById('input-y').value);
+        container.children[endy * 100 + endx].style.backgroundColor = 'red';
+
+        findPath(map, [0, 0], [endx, endy])
+    }
+
     function sleep(dur) {
         return new Promise(resolve => {
             setTimeout(resolve, dur);

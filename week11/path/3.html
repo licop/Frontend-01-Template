@@ -10,13 +10,24 @@
     }
     #container{
         width: 701px;
+        margin-top: 10px;
     }
+    input{
+        width: 50px;
+    }
+
 </style>
+<div id="setting">
+    <p>设置终点x坐标：<input id="input-x" type="text"></p>
+    <p>设置终点y坐标：<input id="input-y" type="text"></p>
+    <button onclick="localStorage.map1 = JSON.stringify(map)">保存</button>
+    <button onclick="startFindPath()">寻找路径</button>
+</div>
+
 <div id="container"></div>
-<button onclick="localStorage.map1 = JSON.stringify(map)">save</button>
 
 <script>
-    
+
     // 启发式函数, 提高查找效率
     // 时间复杂度为O(n)
     class Sorted {
@@ -210,6 +221,14 @@
         return null;
     }
     
+    function startFindPath() {
+        let endx = Number(document.getElementById('input-x').value);
+        let endy = Number(document.getElementById('input-y').value);
+        container.children[endy * 100 + endx].style.backgroundColor = 'red';
+
+        findPath(map, [0, 0], [endx, endy])
+    }
+
     function sleep(dur) {
         return new Promise(resolve => {
             setTimeout(resolve, dur);
